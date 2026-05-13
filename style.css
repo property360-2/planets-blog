@@ -1,0 +1,729 @@
+/*
+  Solar System Showcase Styles
+  Purpose: Defines the visual system, responsive layout, planet sections, SVG containers, cursor shell, and motion states for the solar system experience.
+  Contents: Design tokens, base document rules, fixed navigation, hero composition, planet statistics layouts, animated SVG styling hooks, outro content, and mobile/reduced-motion adaptations.
+  System fit: Supports index.html as the presentation layer while main.js injects SVG visuals and interaction state classes.
+*/
+
+@import url("./content.css");
+@import url("./responsive.css");
+
+:root {
+  --bg: #05070d;
+  --bg-soft: #0c101b;
+  --text: #f4f0e8;
+  --muted: #a9adba;
+  --line: rgba(255, 255, 255, 0.14);
+  --accent: #ffb347;
+  --font-display: "Syne", system-ui, sans-serif;
+  --font-data: "DM Mono", Consolas, monospace;
+  --font-editorial: "Cormorant Garamond", Georgia, serif;
+  --nav-width: 176px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 72% 18%, rgba(96, 126, 190, 0.18), transparent 30rem),
+    radial-gradient(circle at 15% 82%, rgba(228, 119, 70, 0.12), transparent 28rem),
+    var(--bg);
+  font-family: var(--font-display);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a {
+  cursor: none;
+}
+
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+}
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.cursor.is-visible {
+  opacity: 1;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: absolute;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  box-shadow: 0 0 18px var(--accent);
+  transition: opacity 180ms ease;
+}
+
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: width 300ms var(--ease), height 300ms var(--ease), border-color 300ms var(--ease), background 300ms var(--ease);
+  display: grid;
+  place-items: center;
+}
+
+.cursor-ring::after {
+  content: "VIEW";
+  font-family: var(--font-data);
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 0.15em;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+}
+
+.cursor.is-hovering .cursor-ring {
+  width: 76px;
+  height: 76px;
+  border-color: var(--accent);
+  background: rgba(255, 179, 71, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+.cursor.is-hovering .cursor-ring::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cursor.is-hovering .cursor-dot {
+  opacity: 0;
+}
+
+.cursor-planet-label {
+  position: absolute;
+  top: calc(50% + 44px);
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+  color: var(--accent, #fff);
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 300ms var(--ease), transform 300ms var(--ease);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.cursor.is-planet .cursor-planet-label {
+  opacity: 1;
+  transform: translate(-50%, 10px);
+}
+
+.cursor.is-planet .cursor-ring {
+  border-color: var(--accent);
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.scroll-progress-fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #ffb347, #63d2ff, #d4c273);
+  transform-origin: left center;
+}
+
+.nav {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 70;
+  width: var(--nav-width);
+  padding: 28px 18px;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(90deg, rgba(5, 7, 13, 0.86), rgba(5, 7, 13, 0.42));
+  backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: grid;
+  gap: 2px;
+}
+
+.nav-logo-sol {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.nav-logo-sub,
+.nav-link,
+.nav-hint-text,
+.planet-classification,
+.hero-eyebrow,
+.outro-eyebrow,
+.scroll-cue-label {
+  font-family: var(--font-data);
+  letter-spacing: 0;
+}
+
+.nav-logo-sub {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.nav-planets {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: block;
+  padding: 8px 0;
+  color: var(--muted);
+  font-size: 11px;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.nav-link:hover,
+.nav-link.is-active {
+  color: var(--text);
+  transform: translateX(4px);
+}
+
+.nav-hint {
+  display: grid;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.nav-hint-arrow {
+  width: 1px;
+  height: 56px;
+  background: linear-gradient(var(--line), transparent);
+}
+
+.section {
+  position: relative;
+  min-height: 100svh;
+  padding: 96px 7vw 96px calc(var(--nav-width) + 7vw);
+}
+
+.hero-section {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
+  align-items: center;
+  gap: 44px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-eyebrow,
+.planet-classification,
+.outro-eyebrow {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.hero-title,
+.outro-title {
+  margin: 18px 0 22px;
+  font-size: clamp(56px, 9vw, 142px);
+  line-height: 0.83;
+  letter-spacing: 0;
+}
+
+.hero-title-line {
+  display: block;
+}
+
+.hero-title-em,
+.outro-title em {
+  color: #d8e8ff;
+  font-family: var(--font-editorial);
+  font-weight: 300;
+}
+
+.hero-subtitle,
+.planet-desc,
+.outro-desc,
+.belt-desc,
+.voyager-text {
+  max-width: 680px;
+  color: var(--muted);
+  font-size: clamp(17px, 1.6vw, 22px);
+  line-height: 1.55;
+}
+
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-top: 34px;
+}
+
+.hero-stat {
+  display: grid;
+  gap: 4px;
+}
+
+.hero-stat-value {
+  font: 400 28px/1 var(--font-data);
+}
+
+.hero-stat-label,
+.ps-label,
+.ps-unit,
+.od-label,
+.od-value {
+  color: var(--muted);
+  font: 400 11px/1.35 var(--font-data);
+}
+
+.hero-orrery {
+  min-height: min(74vw, 720px);
+  display: grid;
+  place-items: center;
+}
+
+.scroll-cue {
+  position: absolute;
+  right: 4vw;
+  bottom: 32px;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.scroll-cue-line {
+  position: relative;
+  width: 1px;
+  height: 64px;
+  background: var(--line);
+}
+
+.scroll-cue-dot {
+  position: absolute;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  animation: cue 1.7s var(--ease) infinite;
+}
+
+.planet-section {
+  display: grid;
+  align-items: center;
+}
+
+.section-bg-glow {
+  position: absolute;
+  inset: 16% 6% 14% auto;
+  width: min(58vw, 780px);
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--section-accent, #ffb347) 18%, transparent), transparent 66%);
+  filter: blur(32px);
+  opacity: 0.9;
+}
+
+.planet-section-inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.92fr) minmax(320px, 1.08fr);
+  align-items: center;
+  gap: 54px;
+}
+
+.planet-section:nth-of-type(even) .planet-section-inner {
+  grid-template-columns: minmax(320px, 1.08fr) minmax(280px, 0.92fr);
+}
+
+.planet-section:nth-of-type(even) .planet-info-col {
+  order: 2;
+}
+
+.planet-number {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.16);
+  font: 400 clamp(48px, 9vw, 132px)/0.8 var(--font-data);
+}
+
+.planet-name {
+  margin: 0 0 20px;
+  font-size: clamp(48px, 8vw, 122px);
+  line-height: 0.9;
+  letter-spacing: 0;
+}
+
+.planet-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  max-width: 640px;
+  padding: 1px;
+  margin: 34px 0 0;
+  background: var(--line);
+}
+
+.ps-row {
+  min-height: 72px;
+  padding: 16px;
+  background: rgba(5, 7, 13, 0.78);
+}
+
+.ps-value {
+  margin: 7px 0 0;
+  font: 400 clamp(18px, 2vw, 26px)/1.1 var(--font-data);
+}
+
+.planet-visual-col {
+  min-height: min(72vw, 620px);
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+}
+
+.planet-svg,
+.orrery-svg {
+  width: min(100%, 720px);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 22px 50px rgba(0, 0, 0, 0.45));
+}
+
+.planet-disc,
+.planet-band,
+.planet-feature,
+.ring-shape,
+.orbit-planet {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.reveal-item {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+@keyframes cue {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  35%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(58px);
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   DEEP-DIVE SIDE DRAWER STYLES
+════════════════════════════════════════════ */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 4, 6, 0.72);
+  backdrop-filter: blur(8px);
+  z-index: 990;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 400ms ease, visibility 400ms ease;
+}
+
+.drawer-backdrop.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.side-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(88vw, 460px);
+  height: 100vh;
+  background: rgba(12, 12, 15, 0.88);
+  backdrop-filter: blur(28px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 1000;
+  box-shadow: -30px 0 70px rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.drawer-header {
+  padding: 36px 36px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.drawer-subtitle {
+  font-family: "DM Mono", monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  color: var(--accent, #a8a8a8);
+  margin-bottom: 6px;
+}
+
+.drawer-title {
+  font-family: "Syne", sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.drawer-close {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.drawer-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.08);
+}
+
+.drawer-content {
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.drawer-section-title {
+  font-family: "DM Mono", monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 16px;
+  border-left: 2px solid var(--accent, #fff);
+  padding-left: 8px;
+}
+
+/* Layer Stack */
+.drawer-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.layer-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.layer-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: "DM Mono", monospace;
+  font-size: 0.8rem;
+}
+
+.layer-name {
+  color: #ffffff;
+}
+
+.layer-pct {
+  color: var(--accent, #a8a8a8);
+}
+
+.layer-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.layer-fill {
+  height: 100%;
+  background: var(--accent, #fff);
+  border-radius: 999px;
+  width: 0%;
+}
+
+.layer-desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* Controls */
+.toggle-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-control input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 40px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  position: relative;
+  transition: background 300ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggle-control input:checked ~ .toggle-slider {
+  background: var(--accent, #4fa3e0);
+}
+
+.toggle-control input:checked ~ .toggle-slider::before {
+  transform: translateX(18px);
+}
+
+.toggle-label {
+  font-family: "DM Mono", monospace;
+  font-size: 0.85rem;
+  color: #ffffff;
+}
+
+/* Scientific Report */
+.drawer-desc {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+/* Missions */
+.drawer-missions {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drawer-missions li {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  padding-left: 14px;
+  position: relative;
+}
+
+.drawer-missions li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  color: var(--accent, #fff);
+  font-weight: bold;
+}
+
+/* ═══════════════════════════════════════════
+   CONTEXTUAL TOOLTIP
+════════════════════════════════════════════ */
+.stat-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 2000;
+  background: rgba(14, 14, 18, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 16px;
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translate(-50%, 10px);
+  max-width: 240px;
+}
+
+.tooltip-content {
+  font-family: "DM Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #e0e0e0;
+  text-align: center;
+}

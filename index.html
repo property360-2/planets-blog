@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Solar System — A Journey Through Space</title>
+
+  <!-- Fonts: Syne (display) + DM Mono (data) + Cormorant Garamond (editorial) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       CUSTOM CURSOR
+  ════════════════════════════════════════════ -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    <div class="cursor-planet-label"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       STAR FIELD CANVAS (mouse parallax layers)
+  ════════════════════════════════════════════ -->
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
+  <!-- ═══════════════════════════════════════════
+       SCROLL PROGRESS BAR
+  ════════════════════════════════════════════ -->
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true">
+    <div class="scroll-progress-fill" id="scrollProgressFill"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+  ════════════════════════════════════════════ -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Planet navigation">
+    <div class="nav-logo">
+      <span class="nav-logo-sol">SOL</span>
+      <span class="nav-logo-sub">SYSTEM</span>
+    </div>
+
+    <ul class="nav-planets" role="list">
+      <li><a href="#sun"     data-planet="sun"     class="nav-link">☉ Sun</a></li>
+      <li><a href="#mercury" data-planet="mercury" class="nav-link">I Mercury</a></li>
+      <li><a href="#venus"   data-planet="venus"   class="nav-link">II Venus</a></li>
+      <li><a href="#earth"   data-planet="earth"   class="nav-link">III Earth</a></li>
+      <li><a href="#mars"    data-planet="mars"    class="nav-link">IV Mars</a></li>
+      <li><a href="#jupiter" data-planet="jupiter" class="nav-link">V Jupiter</a></li>
+      <li><a href="#saturn"  data-planet="saturn"  class="nav-link">VI Saturn</a></li>
+      <li><a href="#uranus"  data-planet="uranus"  class="nav-link">VII Uranus</a></li>
+      <li><a href="#neptune" data-planet="neptune" class="nav-link">VIII Neptune</a></li>
+    </ul>
+
+    <div class="nav-hint" aria-hidden="true">
+      <span class="nav-hint-text">SCROLL TO EXPLORE</span>
+      <div class="nav-hint-arrow"></div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO — FULL SOLAR SYSTEM OVERVIEW
+  ════════════════════════════════════════════ -->
+  <section class="section hero-section" id="hero" aria-label="Solar system overview">
+
+    <div class="hero-content">
+      <div class="hero-eyebrow reveal-item">
+        <span class="eyebrow-dash">—</span>
+        MISSION BRIEF
+        <span class="eyebrow-dash">—</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="hero-title-line reveal-item">Our</span>
+        <span class="hero-title-line hero-title-em reveal-item"><em>Solar</em></span>
+        <span class="hero-title-line reveal-item">System</span>
+      </h1>
+
+      <p class="hero-subtitle reveal-item">
+        Eight planets. One star.<br />4.6 billion years in the making.
+      </p>
+
+      <div class="hero-stats reveal-item" role="list" aria-label="Solar system facts">
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-value" data-target="8">0</span>
+          <span class="hero-stat-label">Planets</span>
+        </div>
+        <div class="hero-stat-divider" aria-hidden="true">·</div>
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-value" data-target="290">0</span>
+          <span class="hero-stat-label">Known Moons</span>
+        </div>
+        <div class="hero-stat-divider" aria-hidden="true">·</div>
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-value">4.6B</span>
+          <span class="hero-stat-label">Years Old</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SVG Solar System Orrery — injected in Phase 2 -->
+    <div class="hero-orrery" id="hero-orrery" aria-label="Interactive solar system diagram">
+      <!-- SVG will be loaded here by main.js -->
+      <div class="orrery-placeholder">
+        <div class="orrery-loading-ring"></div>
+      </div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="scroll-cue reveal-item" aria-hidden="true">
+      <span class="scroll-cue-label">SCROLL</span>
+      <div class="scroll-cue-line">
+        <div class="scroll-cue-dot"></div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       SUN SECTION
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="sun" data-planet="sun" data-accent="#ffb347" aria-label="The Sun">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">THE STAR AT THE CENTER</div>
+        <div class="planet-number reveal-item" aria-hidden="true">☉</div>
+        <h2 class="planet-name reveal-item">Sun</h2>
+        <p class="planet-desc reveal-item">
+          A G-type main-sequence star containing 99.86% of the Solar System's total mass.
+          Its core reaches 15 million degrees Celsius — hot enough to fuse 600 million tonnes
+          of hydrogen into helium every second, releasing energy that will sustain life on Earth
+          for another 5 billion years.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Sun statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">1,391,000 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Surface Temperature</dt>
+            <dd class="ps-value">5,500 <span class="ps-unit">°C</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Core Temperature</dt>
+            <dd class="ps-value">15,000,000 <span class="ps-unit">°C</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Age</dt>
+            <dd class="ps-value">4.6 <span class="ps-unit">billion years</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Mass (vs Earth)</dt>
+            <dd class="ps-value">333,000 <span class="ps-unit">× Earth</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Composition</dt>
+            <dd class="ps-value">75% H · 24% He</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- SVG Planet Visual — injected in Phase 2 -->
+      <div class="planet-visual-col reveal-item" id="sun-visual" aria-label="Illustration of the Sun"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       MERCURY
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="mercury" data-planet="mercury" data-accent="#a8a8a8" aria-label="Mercury">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">TERRESTRIAL · INNERMOST</div>
+        <div class="planet-number reveal-item" aria-hidden="true">01</div>
+        <h2 class="planet-name reveal-item">Mercury</h2>
+        <p class="planet-desc reveal-item">
+          Scorched by day, frozen by night. The smallest planet endures temperature swings
+          from 430°C at noon to −180°C at midnight — the solar system's most extreme range,
+          with no atmosphere to buffer the violence. Heavily cratered, ancient, and unforgiving.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Mercury statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">57.9M <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">88 <span class="ps-unit">Earth days</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">4,879 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Day Length</dt>
+            <dd class="ps-value">59 <span class="ps-unit">Earth days</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">0</dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Gravity (vs Earth)</dt>
+            <dd class="ps-value">0.38<span class="ps-unit">g</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="mercury-visual" aria-label="Illustration of Mercury"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       VENUS
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="venus" data-planet="venus" data-accent="#e0a84b" aria-label="Venus">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">TERRESTRIAL · EARTH'S TWIN</div>
+        <div class="planet-number reveal-item" aria-hidden="true">02</div>
+        <h2 class="planet-name reveal-item">Venus</h2>
+        <p class="planet-desc reveal-item">
+          Hell with clouds. A runaway greenhouse effect has made Venus the hottest planet at
+          465°C — hotter than Mercury despite being farther from the Sun. Its thick atmosphere
+          of 96% CO₂ traps heat relentlessly, while clouds of sulfuric acid circle the globe.
+          One day on Venus lasts longer than its year.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Venus statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">108.2M <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">225 <span class="ps-unit">Earth days</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">12,104 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Day Length</dt>
+            <dd class="ps-value">243 <span class="ps-unit">Earth days</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">0</dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Surface Pressure</dt>
+            <dd class="ps-value">92 <span class="ps-unit">× Earth</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="venus-visual" aria-label="Illustration of Venus"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       EARTH
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="earth" data-planet="earth" data-accent="#4fa3e0" aria-label="Earth">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">TERRESTRIAL · HABITABLE</div>
+        <div class="planet-number reveal-item" aria-hidden="true">03</div>
+        <h2 class="planet-name reveal-item">Earth</h2>
+        <p class="planet-desc reveal-item">
+          The pale blue dot. The only confirmed harbor of life in the universe — a cosmic
+          accident of distance, size, and chemistry. 71% of the surface is water. A magnetic
+          field shields life from solar radiation. The Moon stabilizes our axial tilt.
+          We are the lucky ones.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Earth statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">149.6M <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">365.25 <span class="ps-unit">days</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">12,742 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Day Length</dt>
+            <dd class="ps-value">24 <span class="ps-unit">hours</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">1 <span class="ps-unit">(The Moon)</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Known Species</dt>
+            <dd class="ps-value">~8.7M</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="earth-visual" aria-label="Illustration of Earth"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       MARS
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="mars" data-planet="mars" data-accent="#c1440e" aria-label="Mars">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">TERRESTRIAL · THE RED PLANET</div>
+        <div class="planet-number reveal-item" aria-hidden="true">04</div>
+        <h2 class="planet-name reveal-item">Mars</h2>
+        <p class="planet-desc reveal-item">
+          Humanity's next frontier. Home to Olympus Mons — the solar system's tallest volcano
+          at 22 km — and Valles Marineris, a canyon stretching the width of North America.
+          Ancient riverbeds speak of a warmer, wetter past. The robots we've sent have been
+          searching for what we lost.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Mars statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">227.9M <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">687 <span class="ps-unit">Earth days</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">6,779 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Day Length</dt>
+            <dd class="ps-value">24h 37m <span class="ps-unit">(Sol)</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">2 <span class="ps-unit">(Phobos, Deimos)</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Gravity (vs Earth)</dt>
+            <dd class="ps-value">0.38<span class="ps-unit">g</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="mars-visual" aria-label="Illustration of Mars"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       ASTEROID BELT INTERLUDE
+  ════════════════════════════════════════════ -->
+  <div class="belt-interlude" id="asteroid-belt" aria-hidden="true">
+    <div class="belt-label">— ASTEROID BELT —</div>
+    <div class="belt-content">
+      <div class="belt-particles"></div>
+      <p class="belt-desc">Between Mars and Jupiter lies a ring of rocky debris — remnants from the solar system's formation. Most mass is concentrated in the dwarf planet Ceres.</p>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       JUPITER
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="jupiter" data-planet="jupiter" data-accent="#c88b3a" aria-label="Jupiter">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner planet-section-inner--large">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">GAS GIANT · THE KING</div>
+        <div class="planet-number reveal-item" aria-hidden="true">05</div>
+        <h2 class="planet-name reveal-item">Jupiter</h2>
+        <p class="planet-desc reveal-item">
+          King of planets. So massive that Jupiter and the Sun orbit a common point in space
+          that lies outside the Sun's surface — a barycenter in open space. Its Great Red Spot,
+          a storm 1.3× the size of Earth, has raged for at least 350 years. A failed star.
+          A protector. A wonder.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Jupiter statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">778.5M <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">11.9 <span class="ps-unit">Earth years</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">139,820 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Day Length</dt>
+            <dd class="ps-value">9h 56m</dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">95 <span class="ps-unit">known</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Mass (vs Earth)</dt>
+            <dd class="ps-value">317.8<span class="ps-unit">× Earth</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="jupiter-visual" aria-label="Illustration of Jupiter"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       SATURN
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="saturn" data-planet="saturn" data-accent="#d4c273" aria-label="Saturn">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner planet-section-inner--large">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">GAS GIANT · THE RINGED</div>
+        <div class="planet-number reveal-item" aria-hidden="true">06</div>
+        <h2 class="planet-name reveal-item">Saturn</h2>
+        <p class="planet-desc reveal-item">
+          The jewel of the solar system. Its rings span 282,000 km — wider than the distance
+          from Earth to the Moon — yet are only 10 to 100 meters thick. Thinner, relative to their
+          width, than a sheet of paper. So light in density that Saturn would float if you
+          could find an ocean vast enough to hold it.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Saturn statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">1.43B <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">29.5 <span class="ps-unit">Earth years</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">116,460 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Ring Span</dt>
+            <dd class="ps-value">282,000 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">146 <span class="ps-unit">known</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Density vs Water</dt>
+            <dd class="ps-value">0.69 <span class="ps-unit">(would float)</span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="saturn-visual" aria-label="Illustration of Saturn"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       URANUS
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="uranus" data-planet="uranus" data-accent="#7de8e8" aria-label="Uranus">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">ICE GIANT · SIDEWAYS</div>
+        <div class="planet-number reveal-item" aria-hidden="true">07</div>
+        <h2 class="planet-name reveal-item">Uranus</h2>
+        <p class="planet-desc reveal-item">
+          The planet that rolls. Tilted 98° on its axis, Uranus orbits the Sun essentially
+          on its side — likely the legacy of a catastrophic collision early in the solar system's
+          history. During its 84-year orbit, each pole spends 42 years in continuous sunlight,
+          then 42 years in complete darkness.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Uranus statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">2.87B <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">84 <span class="ps-unit">Earth years</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">50,724 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Axial Tilt</dt>
+            <dd class="ps-value">97.8<span class="ps-unit">°</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">28 <span class="ps-unit">known</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Composition</dt>
+            <dd class="ps-value">Water, Methane, Ammonia Ice</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="uranus-visual" aria-label="Illustration of Uranus"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       NEPTUNE
+  ════════════════════════════════════════════ -->
+  <section class="section planet-section" id="neptune" data-planet="neptune" data-accent="#3f54ba" aria-label="Neptune">
+
+    <div class="section-bg-glow" aria-hidden="true"></div>
+    <div class="planet-section-inner">
+
+      <div class="planet-info-col">
+        <div class="planet-classification reveal-item">ICE GIANT · THE EDGE</div>
+        <div class="planet-number reveal-item" aria-hidden="true">08</div>
+        <h2 class="planet-name reveal-item">Neptune</h2>
+        <p class="planet-desc reveal-item">
+          The wind champion. Winds on Neptune reach 2,100 km/h — the fastest in the solar system.
+          So far from the Sun that sunlight takes over 4 hours to arrive. Yet its internal heat
+          drives storms larger than Earth. One year on Neptune: 165 Earth years. Since its
+          discovery in 1846, it has completed only one orbit.
+        </p>
+
+        <dl class="planet-stats reveal-item" aria-label="Neptune statistics">
+          <div class="ps-row">
+            <dt class="ps-label">Distance from Sun</dt>
+            <dd class="ps-value">4.5B <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Orbital Period</dt>
+            <dd class="ps-value">165 <span class="ps-unit">Earth years</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Diameter</dt>
+            <dd class="ps-value">49,244 <span class="ps-unit">km</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Wind Speed</dt>
+            <dd class="ps-value">2,100 <span class="ps-unit">km/h</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Moons</dt>
+            <dd class="ps-value">16 <span class="ps-unit">known</span></dd>
+          </div>
+          <div class="ps-row">
+            <dt class="ps-label">Light Travel from Sun</dt>
+            <dd class="ps-value">4h 10m</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="planet-visual-col reveal-item" id="neptune-visual" aria-label="Illustration of Neptune"></div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       OUTRO — THE EDGE OF THE SOLAR SYSTEM
+  ════════════════════════════════════════════ -->
+  <section class="section outro-section" id="outro" aria-label="Beyond the solar system">
+
+    <div class="outro-inner">
+      <div class="outro-eyebrow reveal-item">BEYOND THE LAST PLANET</div>
+      <h2 class="outro-title reveal-item">
+        The Edge of<br /><em>Everything</em>
+      </h2>
+      <p class="outro-desc reveal-item">
+        Past Neptune lies the Kuiper Belt — an icy ring hosting Pluto and thousands of other
+        bodies. Further still, the scattered disc. Then the Oort Cloud: a vast, spherical shell
+        of icy objects extending up to 100,000 AU from the Sun — nearly a quarter of the way
+        to the nearest star. Two Voyager probes are out there right now, still transmitting.
+      </p>
+
+      <div class="outro-distances reveal-item" role="list" aria-label="Solar system distances">
+        <div class="od-item" role="listitem">
+          <span class="od-label">Kuiper Belt</span>
+          <div class="od-bar-track"><div class="od-bar" style="--fill: 20%"></div></div>
+          <span class="od-value">30–50 AU</span>
+        </div>
+        <div class="od-item" role="listitem">
+          <span class="od-label">Heliopause</span>
+          <div class="od-bar-track"><div class="od-bar" style="--fill: 45%"></div></div>
+          <span class="od-value">~123 AU</span>
+        </div>
+        <div class="od-item" role="listitem">
+          <span class="od-label">Oort Cloud</span>
+          <div class="od-bar-track"><div class="od-bar" style="--fill: 80%"></div></div>
+          <span class="od-value">2,000–100,000 AU</span>
+        </div>
+        <div class="od-item" role="listitem">
+          <span class="od-label">Proxima Centauri</span>
+          <div class="od-bar-track"><div class="od-bar" style="--fill: 100%"></div></div>
+          <span class="od-value">268,770 AU</span>
+        </div>
+      </div>
+
+      <div class="outro-voyager reveal-item">
+        <div class="voyager-dot"></div>
+        <p class="voyager-text">Voyager 1 is currently <strong id="voyager-distance">~23.9 billion km</strong> from Earth — the farthest human-made object in existence, still sending signals home.</p>
+      </div>
+    </div>
+
+    <div class="outro-back reveal-item">
+      <a href="#hero" class="back-to-top">↑ Return to the System</a>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       DEEP-DIVE SIDE DRAWER
+  ════════════════════════════════════════════ -->
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="side-drawer" id="sideDrawer" aria-hidden="true" aria-label="Planet Details Drawer">
+    <div class="drawer-header">
+      <div class="drawer-subtitle" id="drawerSubtitle">INTERNAL ANATOMY</div>
+      <h3 class="drawer-title" id="drawerTitle">Planet Name</h3>
+      <button class="drawer-close" id="drawerClose" aria-label="Close details">×</button>
+    </div>
+
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <h4 class="drawer-section-title">Visual Controls</h4>
+        <div class="drawer-controls">
+          <label class="toggle-control">
+            <input type="checkbox" id="toggleAtmosphere" checked />
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Atmosphere / Clouds</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <h4 class="drawer-section-title">Internal Composition</h4>
+        <div class="drawer-layers" id="drawerLayers">
+          <!-- Dynamic layer bars injected by JS -->
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <h4 class="drawer-section-title">Scientific Report</h4>
+        <p class="drawer-desc" id="drawerDeepDive">Detailed overview text goes here.</p>
+      </div>
+
+      <div class="drawer-section">
+        <h4 class="drawer-section-title">Exploration Logs</h4>
+        <ul class="drawer-missions" id="drawerMissions">
+          <!-- Dynamic missions injected by JS -->
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Contextual Tooltip -->
+  <div class="stat-tooltip" id="statTooltip" aria-hidden="true" role="tooltip">
+    <div class="tooltip-content" id="tooltipContent">Context info</div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS
+  ════════════════════════════════════════════ -->
+  <!-- anime.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <!-- Main app (Phase 3) -->
+  <script src="main.js"></script>
+
+</body>
+</html>

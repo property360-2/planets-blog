@@ -1,0 +1,93 @@
+/*
+  Solar System Showcase Content Styles
+  Purpose: Styles the asteroid belt interlude and outro distance content that sit between and after planet sections.
+  Contents: Belt divider layout, asteroid particle texture, outro distance bars, Voyager callout, and back-to-top link styling.
+  System fit: Imported by style.css to keep section content styles separate from base layout and SVG presentation rules.
+*/
+
+.belt-interlude {
+  position: relative;
+  padding: 78px 7vw 78px calc(var(--nav-width) + 7vw);
+  border-block: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.belt-label {
+  color: var(--accent);
+  font: 400 12px/1 var(--font-data);
+}
+
+.belt-content {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(280px, 1fr);
+  align-items: center;
+  gap: 34px;
+  margin-top: 22px;
+}
+
+.belt-particles {
+  min-height: 74px;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.72) 0 1px, transparent 2px);
+  background-size: 18px 12px;
+  transform: skewX(-18deg);
+  opacity: 0.55;
+}
+
+.outro-section {
+  display: grid;
+  align-items: center;
+}
+
+.outro-inner {
+  max-width: 900px;
+}
+
+.outro-distances {
+  display: grid;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.od-item {
+  display: grid;
+  grid-template-columns: 150px minmax(120px, 1fr) 140px;
+  align-items: center;
+  gap: 14px;
+}
+
+.od-bar-track {
+  height: 7px;
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.od-bar {
+  width: var(--fill);
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #63d2ff);
+}
+
+.outro-voyager {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 38px;
+}
+
+.voyager-dot {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: #63d2ff;
+  box-shadow: 0 0 24px #63d2ff;
+}
+
+.back-to-top {
+  display: inline-flex;
+  margin-top: 44px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  font-family: var(--font-data);
+}

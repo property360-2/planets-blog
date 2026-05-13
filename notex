@@ -1,0 +1,5 @@
+# Using Python 3
+python -m http.server 8000
+
+# Or using Node.js (if installed)
+npx http-server
