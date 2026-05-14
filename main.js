@@ -173,6 +173,19 @@ function createPlanetDefs(planet, gradientId, clipId) {
     createSvgElement("feGaussianBlur", { stdDeviation: "9", result: "blur" }),
     merge
   ]);
+
+  if (planet.id === "saturn") {
+    // Clip for the back part of the rings (top half)
+    const backClip = createSvgElement("clipPath", { id: `${planet.id}-ring-back-clip` });
+    backClip.appendChild(createSvgElement("rect", { x: -200, y: -200, width: 400, height: 200 }));
+    defs.appendChild(backClip);
+
+    // Clip for the front part of the rings (bottom half)
+    const frontClip = createSvgElement("clipPath", { id: `${planet.id}-ring-front-clip` });
+    frontClip.appendChild(createSvgElement("rect", { x: -200, y: 0, width: 400, height: 200 }));
+    defs.appendChild(frontClip);
+  }
+
   return appendChildren(defs, [
     createPlanetGradient(gradientId, planet.color, planet.bands[1], planet.bands[2]),
     createDiscClip(clipId, planet.size / 2),
@@ -250,9 +263,19 @@ function createPlanetSvg(planet) {
   defs.appendChild(shadeGradient);
   svg.appendChild(defs);
 
+  // Helper to create ring groups for Saturn
+  const createRings = (isFront) => {
+    const group = createSvgElement("g", { 
+      class: isFront ? "rings-front" : "rings-back",
+      "clip-path": `url(#${planet.id}-ring-${isFront ? 'front' : 'back'}-clip)` 
+    });
+    group.appendChild(createSvgElement("ellipse", { class: "ring-shape", cx: 0, cy: 0, rx: 148, ry: 42, fill: "none", stroke: "#eadb9a", "stroke-width": "18", opacity: "0.52", transform: "rotate(-12)" }));
+    group.appendChild(createSvgElement("ellipse", { class: "ring-shape", cx: 0, cy: 0, rx: 178, ry: 52, fill: "none", stroke: "#fff0c9", "stroke-width": "6", opacity: "0.45", transform: "rotate(-12)" }));
+    return group;
+  };
+
   if (planet.id === "saturn") {
-    svg.appendChild(createSvgElement("ellipse", { class: "ring-shape", cx: 0, cy: 0, rx: 148, ry: 42, fill: "none", stroke: "#eadb9a", "stroke-width": "18", opacity: "0.52", transform: "rotate(-12)" }));
-    svg.appendChild(createSvgElement("ellipse", { class: "ring-shape", cx: 0, cy: 0, rx: 178, ry: 52, fill: "none", stroke: "#fff0c9", "stroke-width": "6", opacity: "0.45", transform: "rotate(-12)" }));
+    svg.appendChild(createRings(false)); // Back half
   }
 
   // Outer atmospheric glow
@@ -267,6 +290,10 @@ function createPlanetSvg(planet) {
 
   // Overlay shading on top (does not rotate, keeping light source fixed)
   svg.appendChild(createSvgElement("circle", { cx: 0, cy: 0, r: radius, fill: `url(#${planet.id}-shading)`, "pointer-events": "none" }));
+
+  if (planet.id === "saturn") {
+    svg.appendChild(createRings(true)); // Front half
+  }
   
   return svg;
 }
